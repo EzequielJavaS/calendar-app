@@ -7,6 +7,10 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { messages } from "../../helpers/calendar-messages-es";
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
+import { useDispatch} from 'react-redux';
+import { uiOpenModal } from '../../actions/ui';
+import { aventSetActive } from '../../actions/events';
+import { AddNewFab } from '../ui/AddNewFab';
 
 moment.locale('es');
 
@@ -29,13 +33,17 @@ export const CalendarScreen = () => {
     //Creo el estado para saber dónde abrir la aplicación:
     //Coge el valor del localStorage y si no hay coge 'month'
     const [lastView, setLastView] = useState(localStorage.getItem('lasView')||'month')
+    const dispatch = useDispatch();
 
     const onDoubleClick = (e) =>{
-        console.log('DOBLE CLICK');
+        //Ejecuto la acción para actival el modal
+        dispatch( uiOpenModal());
     }
 
     const onSelectEvent = (e) =>{
-        console.log('SELECCIÓN');
+        //Hace que el evento sea el evento activo
+        dispatch( aventSetActive ( e ) );
+        dispatch(uiOpenModal());
     }
 
     const onViewChange = (e) =>{
@@ -77,6 +85,7 @@ export const CalendarScreen = () => {
                     event: CalendarEvent
                 }}
             />
+            <AddNewFab/>
             <CalendarModal />
         </div>
     )
