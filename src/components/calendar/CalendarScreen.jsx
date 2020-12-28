@@ -7,27 +7,28 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { messages } from "../../helpers/calendar-messages-es";
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
-import { useDispatch} from 'react-redux';
+import { useDispatch, useSelector} from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
-import { aventSetActive } from '../../actions/events';
+import { aventSetActive, eventClearActiveEvent } from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
+import { DeleteEventFab } from '../ui/DeleteEventFab';
 
 moment.locale('es');
 
 //Configure el localizador proporcionando el objeto de moment (o globalize) al localizador correcto.
 const localizer = momentLocalizer(moment);
 
-const events = [{
-    title: 'Cumpleaños del jefe',
-    start: moment().toDate(), //new Date()
-    end: moment().add(2, 'hours').toDate(),
-    bgcolor: '#fafafa',
-    notas: 'Comprar el pastel',
-    user:{
-        _id: '123',
-        name: 'Ezequiel'
-    }
-}]
+// const events = [{
+//     title: 'Cumpleaños del jefe',
+//     start: moment().toDate(), //new Date()
+//     end: moment().add(2, 'hours').toDate(),
+//     bgcolor: '#fafafa',
+//     notas: 'Comprar el pastel',
+//     user:{
+//         _id: '123',
+//         name: 'Ezequiel'
+//     }
+// }]
 
 export const CalendarScreen = () => {
     //Creo el estado para saber dónde abrir la aplicación:
@@ -35,6 +36,9 @@ export const CalendarScreen = () => {
     const [lastView, setLastView] = useState(localStorage.getItem('lasView')||'month')
     const dispatch = useDispatch();
 
+    //TODO: leer del store los eventos
+    const {events, activeEvent} = useSelector(state => state.calendar);
+   
     const onDoubleClick = (e) =>{
         //Ejecuto la acción para actival el modal
         dispatch( uiOpenModal());
@@ -43,14 +47,17 @@ export const CalendarScreen = () => {
     const onSelectEvent = (e) =>{
         //Hace que el evento sea el evento activo
         dispatch( aventSetActive ( e ) );
-        dispatch(uiOpenModal());
     }
 
     const onViewChange = (e) =>{
         setLastView(e); //Llamo al useState.
         //Guardo el (e) en el localStorage (week, day, month. agenda)
         localStorage.setItem('lasView', e);
-        
+    }
+
+    const onSelectSlot = (e) => {
+        //Desactiva el evento y elimina el botón de borrar
+        dispatch( eventClearActiveEvent());
     }
 
     const eventStyleGetter = ( even, start, end, isSelected )=>{ //En estos parámetros están todas las propiedades de los eventos
@@ -80,12 +87,18 @@ export const CalendarScreen = () => {
                 onDoubleClickEvent={onDoubleClick}
                 onSelectEvent={onSelectEvent}
                 onView={ onViewChange }
+                onSelectSlot={ onSelectSlot }
+                selectable={ true }
                 view={lastView}
                 components={{
                     event: CalendarEvent
                 }}
             />
-            <AddNewFab/>
+            <AddNewFab />
+            
+            {/* Activo el botón si hay un Evento activo */}
+            {( activeEvent ) && <DeleteEventFab />}
+
             <CalendarModal />
         </div>
     )

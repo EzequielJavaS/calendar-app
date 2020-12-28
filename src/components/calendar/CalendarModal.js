@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from "moment";
 import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import Swal from "sweetalert2";
 import { useSelector, useDispatch } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { aventAddNew } from "../../actions/events";
+import { aventAddNew, eventClearActiveEvent, evetUpdated } from "../../actions/events";
 
 const customStyles = {
     content : {
@@ -23,6 +23,13 @@ Modal.setAppElement('#root'); //hay que poner el elemeto raiz de React <div id="
 const now = moment().minutes(0).seconds(0).add(1,'hours'); //Seleccionamos la hora
 const nowMoreOneHours = now.clone().add(1, 'hours');
 
+const initEvent ={
+    title: '',
+    notes: '',
+    start: now.toDate(),
+    end: nowMoreOneHours.toDate()
+}
+
 
 export const CalendarModal = () => {
 
@@ -35,27 +42,36 @@ export const CalendarModal = () => {
 
     //Accedo al state de modalOpen para abrir o cerrar el modal
     const {modalOpen} = useSelector(state => state.ui);
+    const {activeEvent} = useSelector(state => state.calendar);
 
     
     //Para trabajar con la información del formulario
-    const [formValues, setFormValues] = useState({
-        title: 'Evento',
-        notes: '',
-        start: now.toDate(),
-        end: nowMoreOneHours.toDate()
-    });
+    const [formValues, setFormValues] = useState(initEvent);
 
     //Extraigo los valores de notes y title. start y end
     const { notes, title, start, end} = formValues;
 
-    const handleInputChange = ({ target} ) => { //Del evento que recibe solo me interesa el Target
+    //Este effect está atento de los cambio de activeEvent para cargar sus datos en el modal
+    useEffect(() => {
+        if ( activeEvent ){
+            setFormValues( activeEvent );
+        } else {
+            setFormValues( initEvent );
+        }
+    }, [activeEvent, setFormValues])
+
+    
+    const handleInputChange = ({target} ) => { //Del evento que recibe solo me interesa el Target
         setFormValues({
             ...formValues,  //Quiero los valores que tenga formValues
             [target.name]:target.value //Solo cambio el name que me traiga el target al value que traiga al llamarlo
         })
     }
     const closeModal = ()=>{
-        dispatch( uiCloseModal());
+        dispatch( uiCloseModal());       
+        dispatch (eventClearActiveEvent());
+        //Pongo el formulario con sus valores vacios.
+        setFormValues( initEvent );
     }
 
     const handleStatDateChange= ( e)=>{ //Recibe el cambio de dateTimePicker. La es es la fecha 
@@ -90,17 +106,24 @@ export const CalendarModal = () => {
             return setTitleValid( false ); //Cambio el estado
         }
 
-        //TODO: Realizar gravación en base de datos
-        dispatch( aventAddNew ({
-            ...formValues, //Hay que enviar lo que ya tenemos
-            id: new Date().getTime(),
-        }));
+        //Si hay un evento activo significa que se está modificando. Si no es que es una creación de un nuevo evento
+        if ( activeEvent ) {
+            dispatch( evetUpdated( formValues ))
+        } else {
+            //TODO: Realizar gravación en base de datos
+            dispatch( aventAddNew ({
+                ...formValues, //Hay que enviar lo que ya tenemos en los inputs del formulario
+                id: new Date().getTime(),
+                user: {
+                    _id: '987',
+                    name: 'Ezequiel'
+                }
+            }));
+        }
 
-    
-        
-        
         setTitleValid( true );
-        closeModal()
+        closeModal();
+        
     }
 
     return (
@@ -112,7 +135,7 @@ export const CalendarModal = () => {
           className="modal"//La clase moda y modal-fondo están definidas en styles.css
           overlayClassName="modal-fondo"//className que se aplicará a la superposición.
         >
-            <h1> Nuevo evento </h1>
+            <h1> { (activeEvent)? 'Editar evento':'Nuevo evento'} </h1>
             <hr />
             <form
                 className="container"

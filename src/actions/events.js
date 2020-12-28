@@ -12,3 +12,14 @@ export const aventSetActive = (event) => ({
     payload: event
 });
 
+//Acción paa limpira nota activa
+export const eventClearActiveEvent = () => ({type: types.eventClearActiveEvent})
+
+//Acción para editar el evento activo
+export const evetUpdated = ( event ) => ({
+    type: types.eventUpdated,
+    payload: event  
+});
+
+//Aación para borrar un evento
+export const eventDeleted = () => ({type: types.eventDeleted})
