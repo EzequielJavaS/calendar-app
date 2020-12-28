@@ -1,7 +1,18 @@
 import React from 'react';
 import './login.css';
+import { useForm } from '../../hooks/useForm';
 
 export const RegisterScreen = () => {
+
+    const [formRegisValues, handleRegisInputChange] = useForm({
+        rName: 'Diana',
+        rEmail: 'diana@gmail.com',
+        rPassword: '123456'
+    });
+
+    const { rName, rEmail, rPassword } = formRegisValues;
+
+
     return (
         <div className="container login-container">
             <div className="row">
