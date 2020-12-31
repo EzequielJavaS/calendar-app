@@ -1,4 +1,4 @@
-import { fetchSinToken } from "../helpers/fetch";
+import { fetchSinToken, fetchConToken } from "../helpers/fetch";
 import { types } from "../types/types";
 import Swal from "sweetalert2";
 
@@ -25,7 +25,6 @@ export const startLogin = (email, password) => {
     }
 }
 
-
 export const startRegister = ( email, password, name ) => {
     return async( dispatch ) => {
         const resp = await fetchSinToken( 'auth/new', {email, password, name }, 'POST' );
@@ -47,8 +46,35 @@ export const startRegister = ( email, password, name ) => {
     }
 }
 
+export const startCheking = () => {
+    return async (dispatch)=>{
+        //Aquí vamos a comenzar a revalidar el token
+        const resp = await fetchConToken( 'auth/renew');
+        const body = await resp.json();
+
+        if( body.ok ){
+            //Guardo el token el el localStorage
+            localStorage.setItem('token', body.token);
+            localStorage.setItem('token-init-date', new Date().getTime() );
+
+            dispatch(login({
+                uid: body.uid,
+                name: body.name
+            }))
+        }else{
+            Swal.fire('Error', body.msg, 'error');
+            //Si algo ha salido mal y no se ha podido revalidar el token hay que finalizarlo
+            dispatch( checkingFinish());
+        }
+        
+    }
+}
+
+const checkingFinish = () => ({type: types.authChekingFinish});
+
 //Ahora hay que hacer el dispatch para gravar la información del usuario
 const login = ( user ) => ({
     type: types.authLogin,
     payload: user
 })
+

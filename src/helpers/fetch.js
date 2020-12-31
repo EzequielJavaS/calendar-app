@@ -19,6 +19,34 @@ const fetchSinToken = ( endpoint, data, method = 'GET' ) => {
         });
     }
 }
+
+//Para cuando sea necesario utilizar el token en la operación
+//Si es una petición GET, hay que mandar los Headers con e token. El tojen lo tengo en localStorage
+const fetchConToken = ( endpoint, data, method = 'GET' ) => {
+    const url = `${ baseUrl }/${ endpoint }`;
+    const token = localStorage.getItem('token')||''; //Token será igual a el valor de localStorage o null.
+
+    if ( method === 'GET') {
+        return fetch( url,{
+            method,
+            headers:{
+                'x-token': token
+            }
+        }
+             )
+    }else{
+        return fetch( url, {
+            method,
+            headers: {
+                'Content-type': 'application/json',
+                'x-token': token
+            },
+            body: JSON.stringify( data ),
+            cache: 'no-cache'
+        });
+    }
+}
 export {
-    fetchSinToken
+    fetchSinToken,
+    fetchConToken
 }
