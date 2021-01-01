@@ -5,7 +5,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Swal from "sweetalert2";
 import { useSelector, useDispatch } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { aventAddNew, eventClearActiveEvent, evetUpdated } from "../../actions/events";
+import { eventClearActiveEvent, evetUpdated, eventStartAddNew } from "../../actions/events";
 
 const customStyles = {
     content : {
@@ -108,19 +108,11 @@ export const CalendarModal = () => {
 
         //Si hay un evento activo significa que se está modificando. Si no es que es una creación de un nuevo evento
         if ( activeEvent ) {
-            dispatch( evetUpdated( formValues ))
+            dispatch( evetUpdated( formValues ));
         } else {
-            //TODO: Realizar gravación en base de datos
-            dispatch( aventAddNew ({
-                ...formValues, //Hay que enviar lo que ya tenemos en los inputs del formulario
-                id: new Date().getTime(),
-                user: {
-                    _id: '987',
-                    name: 'Ezequiel'
-                }
-            }));
+            //Realizar gravación en base de datos
+            dispatch( eventStartAddNew( formValues));
         }
-
         setTitleValid( true );
         closeModal();
         

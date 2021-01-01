@@ -8,8 +8,7 @@ export const startLogin = (email, password) => {
     return async( dispatch ) => {
         const resp = await fetchSinToken( 'auth', {email, password }, 'POST' );
         const body = await resp.json();
-        //console.log(body);
-
+    
         if( body.ok ){
             //Guardo el token el el localStorage
             localStorage.setItem('token', body.token);
@@ -29,7 +28,6 @@ export const startRegister = ( email, password, name ) => {
     return async( dispatch ) => {
         const resp = await fetchSinToken( 'auth/new', {email, password, name }, 'POST' );
         const body = await resp.json();
-        console.log(body);
 
         if( body.ok ){
             //Guardo el token el el localStorage
@@ -62,7 +60,7 @@ export const startCheking = () => {
                 name: body.name
             }))
         }else{
-            Swal.fire('Error', body.msg, 'error');
+
             //Si algo ha salido mal y no se ha podido revalidar el token hay que finalizarlo
             dispatch( checkingFinish());
         }
@@ -76,5 +74,18 @@ const checkingFinish = () => ({type: types.authChekingFinish});
 const login = ( user ) => ({
     type: types.authLogin,
     payload: user
-})
+});
+
+export const startLogout = () => {
+    return ( dispatch )=> {
+        localStorage.clear();
+        dispatch( logout());
+    }
+}
+
+const logout = () => ({ type: types.authLogout})
+
+
+
+
 

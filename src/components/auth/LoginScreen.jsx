@@ -28,7 +28,7 @@ export const LoginScreen = () => {
         <div className="container login-container">
             <div className="row">
                 <div className="col-md-6 login-form-1">
-                    <h3>Ingreso</h3>
+                    <h3>Identificación</h3>
                     <form onSubmit={ handleLogin }>
                         <div className="form-group">
                             <input 
@@ -55,6 +55,13 @@ export const LoginScreen = () => {
                                 type="submit"
                                 className="btnSubmit"
                                 value="Login" 
+                            />
+                        </div>
+                        <div className="form-group">
+                            <input 
+                                type="button"
+                                className="btnSubmit"
+                                value="Registrarse" 
                             />
                         </div>
                     </form>
