@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -9,7 +9,7 @@ import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { useDispatch, useSelector} from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
-import { aventSetActive, eventClearActiveEvent } from '../../actions/events';
+import { aventSetActive, eventClearActiveEvent, eventStartLoading } from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
 import { DeleteEventFab } from '../ui/DeleteEventFab';
 
@@ -35,9 +35,14 @@ export const CalendarScreen = () => {
     //Coge el valor del localStorage y si no hay coge 'month'
     const [lastView, setLastView] = useState(localStorage.getItem('lasView')||'month')
     const dispatch = useDispatch();
-
-    //TODO: leer del store los eventos
     const {events, activeEvent} = useSelector(state => state.calendar);
+    const {uid} = useSelector(state => state.auth);
+
+    
+    //leer del store los eventos
+    useEffect(() => {
+        dispatch( eventStartLoading() )
+    }, [dispatch])
    
     const onDoubleClick = (e) =>{
         //Ejecuto la acción para actival el modal
@@ -60,10 +65,11 @@ export const CalendarScreen = () => {
         dispatch( eventClearActiveEvent());
     }
 
-    const eventStyleGetter = ( even, start, end, isSelected )=>{ //En estos parámetros están todas las propiedades de los eventos
+    const eventStyleGetter = ( event, start, end, isSelected )=>{ //En estos parámetros están todas las propiedades de los eventos
         //Lo que sea que regrese esta función, será el estilo de aplicará a ese evento en particular
+
         const style = {
-            backgroundColor: '#367CF7',
+            backgroundColor: ( uid === event.user._id) ? '#367CF7': '#465660',
             borderRadius: '0px',
             opacity: 0.8,
             display: 'block',

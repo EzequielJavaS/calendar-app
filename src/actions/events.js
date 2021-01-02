@@ -1,5 +1,6 @@
 import { types } from "../types/types";
 import { fetchConToken } from "../helpers/fetch";
+import { prepareEvents } from "../helpers/prepareEvents";
 
 //Comienza el proceso de gravación de un evento
 export const eventStartAddNew = ( event ) => {
@@ -53,4 +54,28 @@ export const evetUpdated = ( event ) => ({
 });
 
 //Aación para borrar un evento
-export const eventDeleted = () => ({type: types.eventDeleted})
+export const eventDeleted = () => ({type: types.eventDeleted});
+
+//Ación y leerá/recogerá todos los eventos de la base de datos.
+export const eventStartLoading = () => {
+    return async ( dispatch ) => {
+        try {
+            const resp = await fetchConToken( 'events');
+            const body = await resp.json();
+            const events =prepareEvents(body.eventos );
+            dispatch( eventLoaded(events));
+        } catch (error) {
+            console.log(error)          
+        }  
+    }
+}
+
+const eventLoaded = (events) =>({
+    type: types.eventLoaded,
+    payload: events
+})
+
+
+
+
+//disparará la acción al reducer para cargar los eventos en el store.
