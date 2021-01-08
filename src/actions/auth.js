@@ -1,6 +1,7 @@
 import { fetchSinToken, fetchConToken } from "../helpers/fetch";
 import { types } from "../types/types";
 import Swal from "sweetalert2";
+import { eventLogout } from "./events";
 
 //Para comenzar el preoceso de autenticación
 //Es una función asícrona gracias al thunk, por eso ponemos un return. Si no es asíncrona no es necesario el return 
@@ -80,6 +81,7 @@ export const startLogout = () => {
     return ( dispatch )=> {
         localStorage.clear();
         dispatch( logout());
+        dispatch( eventLogout() );
     }
 }
 

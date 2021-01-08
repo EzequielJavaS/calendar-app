@@ -1,6 +1,7 @@
 import { types } from "../types/types";
 import { fetchConToken } from "../helpers/fetch";
 import { prepareEvents } from "../helpers/prepareEvents";
+import Swal from "sweetalert2";
 
 //Comienza el proceso de gravación de un evento
 export const eventStartAddNew = ( event ) => {
@@ -47,14 +48,55 @@ export const aventSetActive = (event) => ({
 //Acción paa limpira nota activa
 export const eventClearActiveEvent = () => ({type: types.eventClearActiveEvent})
 
-//Acción para editar el evento activo
-export const evetUpdated = ( event ) => ({
+//Acción para iniciar la modificación de un evento en la base de datos
+export const eventStartUpdate = ( event ) => {
+    return async (dispatch) => {
+        try {
+            const resp = await fetchConToken( `events/${ event.id }`, event, 'PUT');
+            const body = await resp.json();
+
+            if( body.ok ){
+                dispatch( eventUpdated( event ));
+            }else{
+                Swal.fire('Error', body.msg, 'error');
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+//Acción para editar el evento activo en strore
+const eventUpdated = ( event ) => ({
     type: types.eventUpdated,
     payload: event  
 });
 
-//Aación para borrar un evento
-export const eventDeleted = () => ({type: types.eventDeleted});
+//Acción para iniciar la eliminación de un evento
+export const eventStartDelete = () => {
+    //Necesito acceder a datos estados del store:
+    return async (dispatch, getState) => {
+        const {id} = getState().calendar.activeEvent;
+
+        try {
+            const resp = await fetchConToken( `events/${ id }`, {}, 'DELETE');
+            const body = await resp.json();
+
+            if( body.ok ){
+                dispatch( eventDeleted());
+            }else{
+                Swal.fire('Error', body.msg, 'error');
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+//Aación para borrar un evento en el store
+const eventDeleted = () => ({type: types.eventDeleted});
 
 //Ación y leerá/recogerá todos los eventos de la base de datos.
 export const eventStartLoading = () => {
@@ -74,6 +116,8 @@ const eventLoaded = (events) =>({
     type: types.eventLoaded,
     payload: events
 })
+
+export const eventLogout =() => ({type: types.eventLogout});
 
 
 

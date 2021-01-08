@@ -5,7 +5,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Swal from "sweetalert2";
 import { useSelector, useDispatch } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { eventClearActiveEvent, evetUpdated, eventStartAddNew } from "../../actions/events";
+import { eventClearActiveEvent, eventStartUpdate, eventStartAddNew } from "../../actions/events";
 
 const customStyles = {
     content : {
@@ -108,7 +108,7 @@ export const CalendarModal = () => {
 
         //Si hay un evento activo significa que se está modificando. Si no es que es una creación de un nuevo evento
         if ( activeEvent ) {
-            dispatch( evetUpdated( formValues ));
+            dispatch( eventStartUpdate( formValues ));
         } else {
             //Realizar gravación en base de datos
             dispatch( eventStartAddNew( formValues));
