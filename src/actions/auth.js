@@ -61,11 +61,9 @@ export const startCheking = () => {
                 name: body.name
             }))
         }else{
-
             //Si algo ha salido mal y no se ha podido revalidar el token hay que finalizarlo
             dispatch( checkingFinish());
         }
-        
     }
 }
 

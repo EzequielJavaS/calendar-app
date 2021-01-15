@@ -1,7 +1,7 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import '@testing-library/jest-dom';
-import { startLogin, startRegister} from '../../actions/auth';
+import { startLogin, startRegister, startCheking, startLogout} from '../../actions/auth';
 import { types } from '../../types/types';
 import Swal from 'sweetalert2';
 import * as fetchModule from '../../helpers/fetch';
@@ -19,6 +19,9 @@ const initState = {}; //Hacemos que el estado inicial sea un objeto vacío
 let store = mockStore(initState);
 
 Storage.prototype.setItem = jest.fn() //Estamos simulando la llamada a una función.
+Storage.prototype.clear = jest.fn() //Estamos simulando la llamada a una función.
+
+
 
 describe('Pruebas en las acciones de Auth', () => {
 
@@ -85,5 +88,45 @@ describe('Pruebas en las acciones de Auth', () => {
 
         expect( localStorage.setItem ).toHaveBeenCalledWith('token', 'hfg1234');
         expect( localStorage.setItem ).toHaveBeenCalledWith('token-init-date', expect.any(Number));   
+    })
+
+    test('Prueba startCheking ', async() => {
+
+        fetchModule.fetchConToken = jest.fn(()=> ({
+            json(){
+                return{
+                    ok: true,
+                    uid: '123',
+                    name: 'Rigoberto',
+                    token: 'hfg1234'
+                }   
+            } 
+        }));
+
+        await store.dispatch( startCheking() );
+        const actions = store.getActions();
+
+        expect(actions[0]).toEqual( {
+            type: types.authLogin,
+            payload:{
+                uid: '123',
+                name: 'Rigoberto'
+            }
+
+        });
+
+        expect( localStorage.setItem ).toHaveBeenCalledWith( 'token', 'hfg1234');
+
+    })
+
+    test('prueba startLogout ', async() => {
+
+        await store.dispatch( startLogout() );
+        const actions = store.getActions();
+
+        expect(actions[0]).toEqual({
+            type: types.authLogout
+        })
+        expect( localStorage.clear ).toBeCalled;
     })
 })
