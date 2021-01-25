@@ -18,17 +18,6 @@ moment.locale('es');
 //Configure el localizador proporcionando el objeto de moment (o globalize) al localizador correcto.
 const localizer = momentLocalizer(moment);
 
-// const events = [{
-//     title: 'Cumpleaños del jefe',
-//     start: moment().toDate(), //new Date()
-//     end: moment().add(2, 'hours').toDate(),
-//     bgcolor: '#fafafa',
-//     notas: 'Comprar el pastel',
-//     user:{
-//         _id: '123',
-//         name: 'Ezequiel'
-//     }
-// }]
 
 export const CalendarScreen = () => {
     //Creo el estado para saber dónde abrir la aplicación:

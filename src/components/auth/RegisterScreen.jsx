@@ -3,19 +3,14 @@ import './login.css';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch } from 'react-redux';
 import { startRegister } from '../../actions/auth';
+import { NavLink} from 'react-router-dom'
 import Swal from 'sweetalert2';
 
 export const RegisterScreen = () => {
     const dispatch = useDispatch();
 
 
-    const [formRegisValues, handleRegisInputChange] = useForm({
-        rName: 'Diana',
-        rEmail: 'diana@gmail.com',
-        rPassword1: '123456',
-        rPassword2: '123456'
-
-    });
+    const [formRegisValues, handleRegisInputChange] = useForm({});
 
     const { rName, rEmail, rPassword1, rPassword2  } = formRegisValues;
 
@@ -109,6 +104,14 @@ export const RegisterScreen = () => {
                                 className="btnSubmit" 
                                 value="Crear cuenta" />
                         </div>
+                        <NavLink 
+                                activeClassName="active"
+                                className="whiteText" 
+                                exact
+                                to="/login"
+                            >
+                             o volver a Login
+                        </NavLink>
                     </form>
                 </div>
             </div>

@@ -3,6 +3,8 @@ import './login.css';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch } from 'react-redux';
 import { startLogin } from '../../actions/auth';
+import { NavLink} from 'react-router-dom'
+
 
 
 export const LoginScreen = () => {
@@ -13,8 +15,8 @@ export const LoginScreen = () => {
     //de los inputs "handleLoginInputChange" y de los  valores introducidos "formLoginValues"
     //Dejo el objeto del estado inicial con valores para no tener que escribir
     const [formLoginValues, handleLoginInputChange] = useForm({
-        lEmail: 'diana@gmail.com',
-        lPassword: '123456'
+        lEmail: '',
+        lPassword: ''
     });
     //Destructuro para poder utilizar las variables de formLoginValues
     const { lEmail, lPassword } = formLoginValues;
@@ -50,64 +52,34 @@ export const LoginScreen = () => {
                                 onChange={handleLoginInputChange}
                             />
                         </div>
-                        <div className="form-group">
-                            <input 
-                                type="submit"
-                                className="btnSubmit"
-                                value="Login" 
-                            />
+                        <div className="line">
+                            <div className="form-group">
+                                <input 
+                                    type="submit"
+                                    className="btnSubmit"
+                                    value="Login" 
+                                />
+                            </div>
+                            {/* <div className="form-group">
+                                <input 
+                                    type="button"
+                                    className="btnSubmit"
+                                    value="Registrarse"
+                                />
+                            </div> */}
+                            <NavLink 
+                                activeClassName="active"
+                                // className="nav-item nav-link" 
+                                exact
+                                to="/regis"
+                            >
+                             o Registrarse
+                            </NavLink>
+
                         </div>
-                        <div className="form-group">
-                            <input 
-                                type="button"
-                                className="btnSubmit"
-                                value="Registrarse" 
-                            />
-                        </div>
+                        
                     </form>
                 </div>
-
-                {/* <div className="col-md-6 login-form-2">
-                    <h3>Registro</h3>
-                    <form>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Nombre"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="email"
-                                className="form-control"
-                                placeholder="Correo"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="password"
-                                className="form-control"
-                                placeholder="Contraseña" 
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <input
-                                type="password"
-                                className="form-control"
-                                placeholder="Repita la contraseña" 
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <input 
-                                type="submit" 
-                                className="btnSubmit" 
-                                value="Crear cuenta" />
-                        </div>
-                    </form>
-                </div> */}
             </div>
         </div>
     )

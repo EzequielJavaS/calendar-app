@@ -79,3 +79,10 @@ html, body {
     left: 25px;
 }
 
+.whiteText{
+    color: white;
+}
+
+.whiteText:hover{
+    color: black;
+}
