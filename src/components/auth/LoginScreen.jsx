@@ -15,8 +15,8 @@ export const LoginScreen = () => {
     //de los inputs "handleLoginInputChange" y de los  valores introducidos "formLoginValues"
     //Dejo el objeto del estado inicial con valores para no tener que escribir
     const [formLoginValues, handleLoginInputChange] = useForm({
-        lEmail: '',
-        lPassword: ''
+        lEmail: 'invitado@prueba.com',
+        lPassword: '123456'
     });
     //Destructuro para poder utilizar las variables de formLoginValues
     const { lEmail, lPassword } = formLoginValues;
